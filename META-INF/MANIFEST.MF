@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: StudentInfoRCP
+Bundle-SymbolicName: StudentInfoRCP;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: studentinfo.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.apache.felix.scr,
+ org.eclipse.equinox.event
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Automatic-Module-Name: StudentInfoRCP
+Bundle-ActivationPolicy: lazy
