@@ -12,7 +12,11 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.text;bundle-version="3.24.200",
  org.eclipse.ui.workbench.source;bundle-version="3.131.0",
  org.eclipse.epp.package.rcp;bundle-version="4.30.0",
- org.eclipse.ui.ide.application;bundle-version="1.5.200"
+ org.eclipse.ui.ide.application;bundle-version="1.5.200",
+ org.eclipse.e4.core.di;bundle-version="1.9.200",
+ org.eclipse.e4.ui.workbench;bundle-version="1.15.200",
+ org.eclipse.e4.ui.di;bundle-version="1.5.200",
+ org.eclipse.e4.ui.workbench.swt;bundle-version="0.17.200"
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Automatic-Module-Name: StudentInfoRCP
 Bundle-ActivationPolicy: lazy

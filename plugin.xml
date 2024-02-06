@@ -19,5 +19,45 @@
             id="StudentInfoRCP.perspective">
       </perspective>
    </extension>
+   
+   <!-- Add extension for StudentTreeView -->
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="studentinfo.StudentTreeView"
+            icon="icons/sample.png"
+            id="studentinfo.StudentTreeView"
+            name="Student Tree View">
+      </view>
+   </extension>
+   
+     <!-- Add extension for StudentTreeContentProvider -->
+<extension point="org.eclipse.ui.views">
+    <view
+        id="studentinfo.StudentTreeContentTreeView" 
+        name="Student Tree View">
+        <category
+            id="studentinfo.StudentTreeContentProvider"
+            name="Student Tree Content Provider">
+        </category>
+        <contentProvider
+            class="studentinfo.StudentTreeContentProvider"
+            id="studentinfo.StudentTreeContentProvider">
+        </contentProvider>
+    </view>
+</extension>
+   
+   <!-- Add extension for StudentTreeLabelProvider -->
+    <extension
+         point="org.eclipse.ui.decorators">
+      <viewerContribution
+            allViewers="true"
+            id="studentinfo.StudentTreeLabelProvider">
+         <labelProvider
+               class="studentinfo.StudentTreeLabelProvider"
+               id="studentinfo.StudentTreeLabelProvider">
+         </labelProvider>
+      </viewerContribution>
+   </extension>
 
 </plugin>
