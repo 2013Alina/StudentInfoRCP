@@ -8,9 +8,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Sash;
 import org.eclipse.ui.part.ViewPart;
 
 public class StudentTreeView extends ViewPart {
@@ -19,9 +21,8 @@ public class StudentTreeView extends ViewPart {
 
     @Override
     public void createPartControl(Composite parent) {
+        System.out.println("HHHHELLLO!!!!");
         SashForm sashForm = new SashForm(parent, SWT.HORIZONTAL);
-        sashForm.setLayoutData(new FillLayout());
-        sashForm.setWeights(new int[] { 1, 1 });
         
         treeViewer = new TreeViewer(sashForm, SWT.BORDER | SWT.MULTI);
         treeViewer.setContentProvider(new StudentTreeContentProvider());
@@ -29,6 +30,17 @@ public class StudentTreeView extends ViewPart {
         
         List<Group> groups = StudentDataManager.getGroups();
         treeViewer.setInput(groups);
+        
+        Sash sash = new Sash(sashForm, SWT.SMOOTH);
+        sashForm.setSashWidth(5);
+        sashForm.setLayoutData(new FillLayout());
+        Color color = new Color(204, 102, 255);
+        sashForm.setWeights(new int[] { 1, 1 });
+        sashForm.setBackground(color);
+        
+        sash.addListener(SWT.Selection, event -> {
+            sashForm.setWeights(new int[] { sashForm.getClientArea().width / 2, sashForm.getClientArea().width / 2 });
+        });
         
         createContextMenu();
         hookContextMenu();
