@@ -26,14 +26,10 @@
       <view
             category="StudentInfoRCP.ViewStudentTree"
             class="studentinfo.StudentTreeView"
-            icon="icons/sample.png"
+            
             id="studentinfo.StudentTreeView"
             name="Student Tree View">
       </view>
-      <category
-            id="StudentInfoRCP.ViewStudentTree"
-            name="ViewStudentTree">
-      </category>
    </extension>
    
         <!-- Add extension for StudentTreeContentProvider -->
@@ -42,7 +38,7 @@
       <view
             class="studentinfo.StudentTreeView"
             id="studentinfo.StudentTreeContentTreeView"
-            name="Student Tree View">
+            name="Student Tree Content View">
          <category
                id="studentinfo.StudentTreeContentProvider"
                name="Student Tree Content Provider">
