@@ -1,4 +1,4 @@
-package studentinfo;
+package studentinfo.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,7 @@ public class StudentDataManager {
         Group group2 = new Group("Group 2", createStudentsForGroup2());
         groups.add(group1);
         groups.add(group2);
+
         return groups;
     }
 

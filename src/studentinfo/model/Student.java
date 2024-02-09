@@ -1,4 +1,4 @@
-package studentinfo;
+package studentinfo.model;
 
 public class Student {
     private String name;
@@ -67,5 +67,10 @@ public class Student {
 
     public void setImage(String image) {
         this.image = image;
+    }
+    
+    @Override
+    public String toString() {
+        return name;
     }
 }

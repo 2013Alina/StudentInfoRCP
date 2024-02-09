@@ -1,4 +1,4 @@
-package studentinfo;
+package studentinfo.menu;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Display;

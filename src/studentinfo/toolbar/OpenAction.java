@@ -1,4 +1,4 @@
-package studentinfo;
+package studentinfo.toolbar;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.PlatformUI;

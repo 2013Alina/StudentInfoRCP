@@ -1,4 +1,4 @@
-package studentinfo;
+package studentinfo.view;
 
 import java.util.List;
 
@@ -10,11 +10,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.ui.part.ViewPart;
+
+import studentinfo.model.Group;
+import studentinfo.model.Student;
+import studentinfo.model.StudentDataManager;
 
 public class StudentTreeView extends ViewPart {
     
@@ -26,29 +29,38 @@ public class StudentTreeView extends ViewPart {
 
     @Override
     public void createPartControl(Composite parent) {
-        System.out.println("HHHHELLLO!!!!");
-        SashForm sashForm = new SashForm(parent, SWT.HORIZONTAL);
-        sashForm.setLayoutData(new GridLayout());
+        String name = parent.getLayout().getClass().getName();
+        System.out.println("NAME = " + name);
         
-        treeViewer = new TreeViewer(sashForm, SWT.BORDER | SWT.MULTI);
+        Color color = new Color(204, 102, 255);
+        SashForm sashForm = new SashForm(parent, SWT.HORIZONTAL);
+        sashForm.setLayoutData(new FillLayout());
+        sashForm.setBackground(color);
+        
+        Composite child1 = new Composite(sashForm,SWT.NONE);
+        child1.setLayout(new FillLayout());
+        treeViewer = new TreeViewer(child1, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
         treeViewer.setContentProvider(new StudentTreeContentProvider());
         treeViewer.setLabelProvider(new StudentTreeLabelProvider());
         
         List<Group> groups = StudentDataManager.getGroups();
         treeViewer.setInput(groups);
         
-        Color color = new Color(204, 102, 255);
-        sashForm.setBackground(color);
+        Composite child2 = new Composite(sashForm,SWT.NONE);
+        child2.setLayout(new FillLayout());
         
         Sash sash = new Sash(sashForm, SWT.SMOOTH);
         sashForm.setSashWidth(5);
        
-//        sashForm.setWeights(new int[] { 1, 1 });
+        sashForm.setWeights(new int[] { 400, 800 });
         
         sash.addListener(SWT.Selection, event -> {
             sashForm.setWeights(new int[] { sashForm.getClientArea().width / 2, sashForm.getClientArea().width / 2 });
         });
         
+        for(org.eclipse.swt.widgets.Control child : parent.getChildren()) {
+            System.out.println("CHILD = " + child.getClass().getName());
+        }
         createContextMenu();
         hookContextMenu();
         

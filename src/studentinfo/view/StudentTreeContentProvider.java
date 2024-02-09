@@ -1,8 +1,11 @@
-package studentinfo;
+package studentinfo.view;
 
 import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
+
+import studentinfo.model.Group;
+import studentinfo.model.Student;
 
 public class StudentTreeContentProvider implements ITreeContentProvider {
 

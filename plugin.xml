@@ -25,10 +25,10 @@
          point="org.eclipse.ui.views">
       <view
             category="StudentInfoRCP.ViewStudentTree"
-            class="studentinfo.StudentTreeView"
+            class="studentinfo.view.StudentTreeView"
             
-            id="studentinfo.StudentTreeView"
-            name="Student Tree View">
+            id="studentinfo.view.StudentTreeView"
+            name="Group View">
       </view>
    </extension>
    
@@ -36,16 +36,16 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="studentinfo.StudentTreeView"
-            id="studentinfo.StudentTreeContentTreeView"
+            class="studentinfo.view.StudentTreeView"
+            id="studentinfo.view.StudentTreeContentTreeView"
             name="Student Tree Content View">
          <category
-               id="studentinfo.StudentTreeContentProvider"
+               id="studentinfo.view.StudentTreeContentProvider"
                name="Student Tree Content Provider">
          </category>
          <contentProvider
-               class="studentinfo.StudentTreeContentProvider"
-               id="studentinfo.StudentTreeContentProvider">
+               class="studentinfo.view.StudentTreeContentProvider"
+               id="studentinfo.view.StudentTreeContentProvider">
          </contentProvider>
       </view>
    </extension>
@@ -55,10 +55,10 @@
          point="org.eclipse.ui.decorators">
       <viewerContribution
             allViewers="true"
-            id="studentinfo.StudentTreeLabelProvider">
+            id="studentinfo.view.StudentTreeLabelProvider">
          <labelProvider
-               class="studentinfo.StudentTreeLabelProvider"
-               id="studentinfo.StudentTreeLabelProvider">
+               class="studentinfo.view.StudentTreeLabelProvider"
+               id="studentinfo.view.StudentTreeLabelProvider">
          </labelProvider>
       </viewerContribution>
    </extension>

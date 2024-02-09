@@ -1,4 +1,4 @@
-package studentinfo;
+package studentinfo.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,5 +32,10 @@ public class Group {
 
     public void setStudentslist(List<Student> studentslist) {
         this.studentslist = studentslist;
+    }
+    
+    @Override
+    public String toString() {
+        return name;
     }
 }
