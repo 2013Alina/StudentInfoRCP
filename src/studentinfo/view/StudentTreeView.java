@@ -13,8 +13,14 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Sash;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
 
+import studentinfo.contextmenu.AddStudentToGroup;
+import studentinfo.contextmenu.DeleteGroupAction;
+import studentinfo.contextmenu.DeleteRecordAction;
+import studentinfo.contextmenu.OpenProfileAction;
 import studentinfo.model.Group;
 import studentinfo.model.Student;
 import studentinfo.model.StudentDataManager;
@@ -22,6 +28,7 @@ import studentinfo.model.StudentDataManager;
 public class StudentTreeView extends ViewPart {
     
     private TreeViewer treeViewer;
+    private MenuManager menuManager;
     
     public StudentTreeView() {
         
@@ -63,11 +70,10 @@ public class StudentTreeView extends ViewPart {
         }
         createContextMenu();
         hookContextMenu();
-        
     }
 
     private void createContextMenu() {
-        MenuManager menuManager = new MenuManager();
+        menuManager = new MenuManager();
         menuManager.setRemoveAllWhenShown(true);
         menuManager.addMenuListener(this::fillContextMenu);
 
@@ -84,22 +90,19 @@ public class StudentTreeView extends ViewPart {
             Object firstElement = selection.getFirstElement();
 
             if (firstElement instanceof Student) {
-//                menuManager.add(new OpenProfileAction((Student) firstElement));
-//                menuManager.add(new DeleteRecordAction((Student) firstElement));
+                menuManager.add(new OpenProfileAction((Student) firstElement));
+                menuManager.add(new DeleteRecordAction((Student) firstElement));
             } else if (firstElement instanceof Group) {
-//                menuManager.add(new AddStudentAction((Group) firstElement));
-//                menuManager.add(new DeleteGroupAction((Group) firstElement));
-            } else {
-//                menuManager.add(new AddGroupAction());
-//                menuManager.add(new DeleteRootFolderAction());
+                menuManager.add(new AddStudentToGroup((Group) firstElement));
+                menuManager.add(new DeleteGroupAction((Group) firstElement));
             }
         }
     }
         
     private void hookContextMenu() {
-//        IActionBars actionBars = getViewSite().getActionBars();
-//        actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), new DeleteRecordAction(treeViewer));
-//        actionBars.updateActionBars();
+        IActionBars actionBars = getViewSite().getActionBars();
+        actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), new DeleteRecordAction((Student) ((IStructuredSelection) treeViewer.getSelection()).getFirstElement()));
+        actionBars.updateActionBars();
     }
     
     @Override
