@@ -1,5 +1,7 @@
 package studentinfo.model;
 
+import java.util.Objects;
+
 public class Student {
     private String name;
     private String group;
@@ -73,4 +75,25 @@ public class Student {
     public String toString() {
         return name;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(address, city, group, image, name, result);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Student other = (Student) obj;
+        return Objects.equals(address, other.address) && Objects.equals(city, other.city)
+                && Objects.equals(group, other.group) && Objects.equals(image, other.image)
+                && Objects.equals(name, other.name) && result == other.result;
+    }
+    
+    
 }
