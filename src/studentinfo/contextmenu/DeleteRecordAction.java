@@ -9,7 +9,6 @@ import org.eclipse.swt.widgets.Display;
 
 import studentinfo.model.Group;
 import studentinfo.model.Student;
-import studentinfo.view.StudentTreeView;
 
 public class DeleteRecordAction extends Action {
 

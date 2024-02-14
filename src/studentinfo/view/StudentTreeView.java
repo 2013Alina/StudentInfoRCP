@@ -9,7 +9,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -31,6 +35,7 @@ public class StudentTreeView extends ViewPart {
     private TreeViewer treeViewer;
     private MenuManager menuManager;
     List<Group> groups = new ArrayList<>();
+    private StudentEditor studentEditor;
 
     public StudentTreeView() {
 
@@ -41,22 +46,18 @@ public class StudentTreeView extends ViewPart {
         String name = parent.getLayout().getClass().getName();
         System.out.println("NAME = " + name);
 
-        Color color = new Color(204, 102, 255);
         SashForm sashForm = new SashForm(parent, SWT.HORIZONTAL);
         sashForm.setLayoutData(new FillLayout());
-        sashForm.setBackground(color);
 
-        Composite child1 = new Composite(sashForm, SWT.NONE);
-        child1.setLayout(new FillLayout());
-        treeViewer = new TreeViewer(child1, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
+        treeViewer = new TreeViewer(sashForm, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
         treeViewer.setContentProvider(new StudentTreeContentProvider());
         treeViewer.setLabelProvider(new StudentTreeLabelProvider());
 
         groups = StudentDataManager.getGroups();
         treeViewer.setInput(groups);
 
-        Composite child2 = new Composite(sashForm, SWT.NONE);
-        child2.setLayout(new FillLayout());
+        studentEditor = new StudentEditor();
+        studentEditor.createPartControl(sashForm);
 
         Sash sash = new Sash(sashForm, SWT.SMOOTH);
         sashForm.setSashWidth(5);
@@ -70,8 +71,40 @@ public class StudentTreeView extends ViewPart {
         for (org.eclipse.swt.widgets.Control child : parent.getChildren()) {
             System.out.println("CHILD = " + child.getClass().getName());
         }
+
         createContextMenu();
         bindingContextMenu();
+
+        // dragging Student from treeViewer
+        Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
+        treeViewer.addDragSupport(DND.DROP_MOVE, types, new DragSourceListener() {
+
+            @Override
+            public void dragStart(DragSourceEvent event) { //какие данные будут перетаскиваться
+                IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+                Object firstElement = selection.getFirstElement();
+                if (firstElement instanceof Student) {
+                    event.data = ((Student) firstElement).getName();
+                } else {
+                    event.doit = false;
+                }
+            }
+
+            @Override
+            public void dragSetData(DragSourceEvent event) { //данных, которые будут переданы при операции перетаскивания
+                if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
+                    Object selectedObject = ((IStructuredSelection) treeViewer.getSelection()).getFirstElement();
+                    if (selectedObject instanceof Student) {
+                        event.data = ((Student) selectedObject).toString();
+                    }
+                }
+            }
+
+            @Override
+            public void dragFinished(DragSourceEvent event) { //после завершения операции перетаскивания, обновить интерфейс пользователя
+
+            }
+        });
     }
 
     private void createContextMenu() {
@@ -110,7 +143,11 @@ public class StudentTreeView extends ViewPart {
 
     @Override
     public void setFocus() {
-        treeViewer.getControl().setFocus();
+        if (treeViewer != null) {
+            treeViewer.getControl().setFocus();
+        } else if (studentEditor != null) {
+            studentEditor.setFocus();
+        }
     }
 
     public List<Group> getGroups() {

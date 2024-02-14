@@ -9,7 +9,7 @@ public class Student {
     private String city;
     private int result;
     private String image;
-    
+
     public Student() {
 
     }
@@ -70,10 +70,11 @@ public class Student {
     public void setImage(String image) {
         this.image = image;
     }
-    
+
     @Override
     public String toString() {
-        return name;
+        return "Name: " + getName() + "\n" + "Group: " + getGroup() + "\n" + "Address: " + getAddress() + "\n"
+                + "City: " + getCity() + "\n" + "Result: " + getResult() + "\n" + "Image: " + getImage();
     }
 
     @Override
@@ -90,10 +91,8 @@ public class Student {
         if (getClass() != obj.getClass())
             return false;
         Student other = (Student) obj;
-        return Objects.equals(address, other.address) && Objects.equals(city, other.city)
-                && Objects.equals(group, other.group) && Objects.equals(image, other.image)
-                && Objects.equals(name, other.name) && result == other.result;
+        return Objects.equals(getAddress(), other.getAddress()) && Objects.equals(getCity(), other.getCity())
+                && Objects.equals(getGroup(), other.getGroup()) && Objects.equals(getImage(), other.getImage())
+                && Objects.equals(getName(), other.getName()) && getResult() == other.getResult();
     }
-    
-    
 }

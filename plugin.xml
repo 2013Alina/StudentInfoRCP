@@ -62,6 +62,15 @@
          </labelProvider>
       </viewerContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="studentinfo.view.StudentEditor"
+            default="false"
+            id="studentinfo.view.StudentEditor"
+            name="Student Editor">
+      </editor>
+   </extension>
    
   
 
