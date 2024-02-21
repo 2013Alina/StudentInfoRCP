@@ -5,20 +5,31 @@ import java.util.List;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.DragDetectEvent;
+import org.eclipse.swt.events.DragDetectListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
 
@@ -31,12 +42,14 @@ import studentinfo.model.Student;
 import studentinfo.model.StudentDataManager;
 
 public class StudentTreeView extends ViewPart {
+    
+    public static final String ID = "studentinfo.view.StudentTreeView";
 
     private TreeViewer treeViewer;
     private MenuManager menuManager;
-    List<Group> groups = new ArrayList<>();
+    private List<Group> groups = new ArrayList<>();
     private StudentEditor studentEditor;
-
+    
     public StudentTreeView() {
 
     }
@@ -47,7 +60,7 @@ public class StudentTreeView extends ViewPart {
         System.out.println("NAME = " + name);
 
         SashForm sashForm = new SashForm(parent, SWT.HORIZONTAL);
-        sashForm.setLayoutData(new FillLayout());
+        sashForm.setLayout(new FillLayout());
 
         treeViewer = new TreeViewer(sashForm, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
         treeViewer.setContentProvider(new StudentTreeContentProvider());
@@ -56,13 +69,8 @@ public class StudentTreeView extends ViewPart {
         groups = StudentDataManager.getGroups();
         treeViewer.setInput(groups);
 
-        studentEditor = new StudentEditor();
-        studentEditor.createPartControl(sashForm);
-
         Sash sash = new Sash(sashForm, SWT.SMOOTH);
         sashForm.setSashWidth(5);
-
-        sashForm.setWeights(new int[] { 400, 800 });
 
         sash.addListener(SWT.Selection, event -> {
             sashForm.setWeights(new int[] { sashForm.getClientArea().width / 2, sashForm.getClientArea().width / 2 });
@@ -75,36 +83,29 @@ public class StudentTreeView extends ViewPart {
         createContextMenu();
         bindingContextMenu();
 
-        // dragging Student from treeViewer
-        Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
-        treeViewer.addDragSupport(DND.DROP_MOVE, types, new DragSourceListener() {
+        
+        // double click Student from treeViewer to editor
+        treeViewer.addDoubleClickListener(new IDoubleClickListener() {
 
             @Override
-            public void dragStart(DragSourceEvent event) { //какие данные будут перетаскиваться
-                IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
-                Object firstElement = selection.getFirstElement();
-                if (firstElement instanceof Student) {
-                    event.data = ((Student) firstElement).getName();
-                } else {
-                    event.doit = false;
-                }
-            }
+            public void doubleClick(DoubleClickEvent event) {
+                IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+                Object selectedElement = selection.getFirstElement();
 
-            @Override
-            public void dragSetData(DragSourceEvent event) { //данных, которые будут переданы при операции перетаскивания
-                if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
-                    Object selectedObject = ((IStructuredSelection) treeViewer.getSelection()).getFirstElement();
-                    if (selectedObject instanceof Student) {
-                        event.data = ((Student) selectedObject).toString();
+                if (selectedElement instanceof Student) {
+                    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    try {
+                        StudentEditorInput newInput = new StudentEditorInput((Student) selectedElement);
+                        page.openEditor(newInput, StudentEditor.ID);
+                    } catch (PartInitException e) {
+                        e.printStackTrace();
                     }
                 }
             }
-
-            @Override
-            public void dragFinished(DragSourceEvent event) { //после завершения операции перетаскивания, обновить интерфейс пользователя
-
-            }
         });
+        
+        // add drag-and-drop from treeViewer to editor
+        initDragAndDrop();
     }
 
     private void createContextMenu() {
@@ -140,6 +141,48 @@ public class StudentTreeView extends ViewPart {
                 (Student) ((IStructuredSelection) treeViewer.getSelection()).getFirstElement(), treeViewer));
         actionBars.updateActionBars();
     }
+    
+    private void initDragAndDrop() { // DragSource для дерева
+        DragSource dragSource = new DragSource(treeViewer.getTree(), DND.DROP_COPY | DND.DROP_MOVE);
+        TextTransfer textTransfer = TextTransfer.getInstance();
+        System.out.println("textTransfer in initDragAndDrop() =  " + textTransfer);
+        dragSource.setTransfer(new Transfer[] { textTransfer });
+        dragSource.addDragListener(new DragSourceAdapter() {
+            @Override
+            public void dragStart(DragSourceEvent event) {
+                IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+                Object selectedElement = selection.getFirstElement();
+                if (selectedElement instanceof Student) {
+                    event.doit = true;
+                    
+                } else {
+                    event.doit = false;
+                }
+            }
+
+            @Override
+            public void dragSetData(DragSourceEvent event) {
+                IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+                Object selectedElement = selection.getFirstElement();
+                if (selectedElement instanceof Student) {
+                    Student student = (Student) selectedElement;
+//         новый эдитор!
+                    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    try {
+                        StudentEditorInput newInput = new StudentEditorInput(student);
+                        page.openEditor(newInput, StudentEditor.ID);
+                    } catch (PartInitException e) {
+                        e.printStackTrace();
+                    }
+//        установка данных
+                    event.data = student.getName() + "\n" + student.getGroup() + "\n" + student.getAddress() + "\n"
+                            + student.getCity() + "\n" + student.getResult() + "\n" + student.getImage();
+                }
+            }
+
+        });
+    }
+
 
     @Override
     public void setFocus() {

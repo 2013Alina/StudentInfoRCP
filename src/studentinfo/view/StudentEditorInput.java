@@ -5,6 +5,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
 import studentinfo.model.Student;
+//StudentEditorInput - входные данные для StudentEditor!
+//передачи объекта Student в редактор StudentEditor, чтобы редактор мог отображать и редактировать информацию о конкретном студенте
 
 public class StudentEditorInput implements IEditorInput {
 

@@ -17,15 +17,15 @@ public class StudentDataManager {
 
     private static List<Student> createStudentsForGroup1() {
         List<Student> students = new ArrayList<>();
-        students.add(new Student("Ivan Ivanov", "Group 1", "Gogolya street, 25", "City Dnepr", 5, "ivan.png"));
-        students.add(new Student("Petr Petrov", "Group 1", "S.Kovalevskoy, 35", "City Dnepr", 4, "petr.png"));
+        students.add(new Student("Ivan Ivanov", "Group 1", "Gogolya street, 25", "Dnepr", 5, "ivan.png"));
+        students.add(new Student("Petr Petrov", "Group 1", "S.Kovalevskoy, 35", "Dnepr", 4, "petr.png"));
         return students;
     }
 
     private static List<Student> createStudentsForGroup2() {
         List<Student> students = new ArrayList<>();
-        students.add(new Student("Alex Alexeev", "Group 2", "Zelena, 165", "City Lvov", 3, "alex.png"));
-        students.add(new Student("Nikolay Nikolaev", "Group 2", "Lichakovskaya, 77", "City Lvov", 5, "nikolay.png"));
+        students.add(new Student("Alex Alexeev", "Group 2", "Zelena, 165", "Lvov", 3, "alex.png"));
+        students.add(new Student("Nikolay Nikolaev", "Group 2", "Lichakovskaya, 77", "Lvov", 5, "nikolay.png"));
         return students;
     }
 }
