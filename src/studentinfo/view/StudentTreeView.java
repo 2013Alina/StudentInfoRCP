@@ -15,15 +15,10 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.DragDetectEvent;
-import org.eclipse.swt.events.DragDetectListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.ui.IActionBars;
@@ -49,6 +44,7 @@ public class StudentTreeView extends ViewPart {
     private MenuManager menuManager;
     private List<Group> groups = new ArrayList<>();
     private StudentEditor studentEditor;
+    private Student student;
     
     public StudentTreeView() {
 
@@ -66,7 +62,7 @@ public class StudentTreeView extends ViewPart {
         treeViewer.setContentProvider(new StudentTreeContentProvider());
         treeViewer.setLabelProvider(new StudentTreeLabelProvider());
 
-        groups = StudentDataManager.getGroups();
+        groups = StudentDataManager.addGroups();
         treeViewer.setInput(groups);
 
         Sash sash = new Sash(sashForm, SWT.SMOOTH);
@@ -141,22 +137,41 @@ public class StudentTreeView extends ViewPart {
                 (Student) ((IStructuredSelection) treeViewer.getSelection()).getFirstElement(), treeViewer));
         actionBars.updateActionBars();
     }
-    
+
     private void initDragAndDrop() { // DragSource для дерева
         DragSource dragSource = new DragSource(treeViewer.getTree(), DND.DROP_COPY | DND.DROP_MOVE);
         TextTransfer textTransfer = TextTransfer.getInstance();
-        System.out.println("textTransfer in initDragAndDrop() =  " + textTransfer);
+        System.out.println("textTransfer in SOURCE =  " + textTransfer);
         dragSource.setTransfer(new Transfer[] { textTransfer });
+
         dragSource.addDragListener(new DragSourceAdapter() {
             @Override
             public void dragStart(DragSourceEvent event) {
                 IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
                 Object selectedElement = selection.getFirstElement();
                 if (selectedElement instanceof Student) {
+                    Student selectedStudent = (Student) selectedElement;
                     event.doit = true;
-                    
+
+                    List<Group> groups = StudentDataManager.addGroups();
+                    List<Student> allStudents = StudentDataManager.getAllStudents(groups);
+                    for (Student st : allStudents) {
+                        if (st.equals(selectedStudent)) {
+                            student = st;
+                            student = student.getStudentWithAllValues();
+
+                            // если тяну студента то откроется эдитор выбраного студента
+                            IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                            try {
+                                StudentEditorInput newInput = new StudentEditorInput(student);
+                                page.openEditor(newInput, StudentEditor.ID);
+                            } catch (PartInitException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
                 } else {
-                    event.doit = false;
+                    event.doit = false; // Запрещено перетаскивать все остальное
                 }
             }
 
@@ -165,24 +180,18 @@ public class StudentTreeView extends ViewPart {
                 IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
                 Object selectedElement = selection.getFirstElement();
                 if (selectedElement instanceof Student) {
-                    Student student = (Student) selectedElement;
-//         новый эдитор!
-                    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                    try {
-                        StudentEditorInput newInput = new StudentEditorInput(student);
-                        page.openEditor(newInput, StudentEditor.ID);
-                    } catch (PartInitException e) {
-                        e.printStackTrace();
-                    }
-//        установка данных
-                    event.data = student.getName() + "\n" + student.getGroup() + "\n" + student.getAddress() + "\n"
+                    // установка данных
+                    String data = student.getName() + "\n" + student.getGroup() + "\n" + student.getAddress() + "\n"
                             + student.getCity() + "\n" + student.getResult() + "\n" + student.getImage();
+                    event.data = data;
                 }
             }
 
+            @Override
+            public void dragFinished(DragSourceEvent event) {
+            }
         });
     }
-
 
     @Override
     public void setFocus() {
@@ -195,5 +204,9 @@ public class StudentTreeView extends ViewPart {
 
     public List<Group> getGroups() {
         return groups;
+    }
+    
+    public TreeViewer getTreeView() {
+        return treeViewer;
     }
 }

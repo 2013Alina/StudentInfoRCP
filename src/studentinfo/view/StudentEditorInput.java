@@ -11,9 +11,9 @@ import studentinfo.model.Student;
 public class StudentEditorInput implements IEditorInput {
 
     private Student student;
-
-    public StudentEditorInput(Student student) {
-        this.student = student;
+    
+    public StudentEditorInput(Object object) {
+        this.student = (Student) object;
     }
 
     public Student getStudent() {

@@ -95,4 +95,8 @@ public class Student {
                 && Objects.equals(getGroup(), other.getGroup()) && Objects.equals(getImage(), other.getImage())
                 && Objects.equals(getName(), other.getName()) && getResult() == other.getResult();
     }
+    
+    public Student getStudentWithAllValues() {
+        return new Student(name, group, address, city, result, image);
+    }
 }
