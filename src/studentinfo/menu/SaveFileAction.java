@@ -5,7 +5,7 @@ import org.eclipse.jface.action.Action;
 public class SaveFileAction extends Action {
 
     public SaveFileAction() {
-        setText("Save JSON file");
+        setText("Save file");
     }
 
     @Override

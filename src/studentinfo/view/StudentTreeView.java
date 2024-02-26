@@ -122,10 +122,10 @@ public class StudentTreeView extends ViewPart {
             Object firstElement = selection.getFirstElement();
 
             if (firstElement instanceof Student) {
-                menuManager.add(new OpenProfileAction((Student) firstElement));
+                menuManager.add(new OpenProfileAction((Student) firstElement, treeViewer));
                 menuManager.add(new DeleteRecordAction((Student) firstElement, treeViewer));
             } else if (firstElement instanceof Group) {
-                menuManager.add(new AddStudentToGroup((Group) firstElement));
+                menuManager.add(new AddStudentToGroup((Group) firstElement, treeViewer));
                 menuManager.add(new DeleteGroupAction((Group) firstElement, treeViewer));
             }
         }
