@@ -7,7 +7,7 @@ public class DeleteAction extends Action {
     
     public DeleteAction() {
         setText("Delete");
-        setToolTipText("Delete Group");
+        setToolTipText("Delete");
         setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(org.eclipse.ui.ISharedImages.IMG_ETOOL_DELETE));
     }
 

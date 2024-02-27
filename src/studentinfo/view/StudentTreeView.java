@@ -29,6 +29,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
 
 import studentinfo.contextmenu.AddStudentToGroup;
+import studentinfo.contextmenu.CreateNewGroup;
 import studentinfo.contextmenu.DeleteGroupAction;
 import studentinfo.contextmenu.DeleteRecordAction;
 import studentinfo.contextmenu.OpenProfileAction;
@@ -127,6 +128,7 @@ public class StudentTreeView extends ViewPart {
             } else if (firstElement instanceof Group) {
                 menuManager.add(new AddStudentToGroup((Group) firstElement, treeViewer));
                 menuManager.add(new DeleteGroupAction((Group) firstElement, treeViewer));
+                menuManager.add(new CreateNewGroup(treeViewer));
             }
         }
     }
@@ -204,6 +206,13 @@ public class StudentTreeView extends ViewPart {
 
     public List<Group> getGroups() {
         return groups;
+    }
+    
+    public void setGroups(List<Group> allgroups) {
+        if (treeViewer != null && !treeViewer.getControl().isDisposed()) {
+            treeViewer.setInput(allgroups);
+            treeViewer.refresh();
+        }
     }
     
     public TreeViewer getTreeView() {
