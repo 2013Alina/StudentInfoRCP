@@ -15,3 +15,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Automatic-Module-Name: StudentInfoRCP
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: studentinfo.Activator
+
+

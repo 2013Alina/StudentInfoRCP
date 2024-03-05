@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 import studentinfo.model.Group;
+import studentinfo.model.Student;
 
 public class CreateNewGroup extends Action {
     
@@ -41,7 +42,10 @@ public class CreateNewGroup extends Action {
                 }
             }
             if (!groupExists) {
-                Group newGroup = new Group(groupName, new ArrayList<>());
+                List<Student> students = new ArrayList<>();
+                Group newGroup = new Group();
+                newGroup.setName(groupName);
+                newGroup.setStudentslist(students);
                 allGroups.add(newGroup);
                 treeViewer.setInput(allGroups);
                 treeViewer.refresh();

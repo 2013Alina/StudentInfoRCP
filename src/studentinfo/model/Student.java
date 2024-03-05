@@ -3,6 +3,7 @@ package studentinfo.model;
 import java.util.Objects;
 
 public class Student {
+    private int id;
     private String name;
     private String group;
     private String address;
@@ -14,13 +15,23 @@ public class Student {
 
     }
 
-    public Student(String name, String group, String address, String city, int result, String image) {
+    public Student(int id, String name, String group, String address, String city, int result, String image) {
+        this.id = id;
         this.name = name;
         this.group = group;
         this.address = address;
         this.city = city;
         this.result = result;
         this.image = image;
+
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -73,30 +84,29 @@ public class Student {
 
     @Override
     public String toString() {
-        return "Name: " + getName() + "\n" + "Group: " + getGroup() + "\n" + "Address: " + getAddress() + "\n"
-                + "City: " + getCity() + "\n" + "Result: " + getResult() + "\n" + "Image: " + getImage();
+        return "Name: " + getName() + "\n" + "Group: " + getGroup() + "\n" + "Address: "
+                + getAddress() + "\n" + "City: " + getCity() + "\n" + "Result: " + getResult() + "\n" + "Image: "
+                + getImage();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(address, city, group, image, name, result);
+        return Objects.hash(id, address, city, group, image, name, result);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Student other = (Student) obj;
-        return Objects.equals(getAddress(), other.getAddress()) && Objects.equals(getCity(), other.getCity())
-                && Objects.equals(getGroup(), other.getGroup()) && Objects.equals(getImage(), other.getImage())
-                && Objects.equals(getName(), other.getName()) && getResult() == other.getResult();
+        Student student = (Student) obj;
+        return id == student.id && result == student.result && Objects.equals(name, student.name)
+                && Objects.equals(group, student.group) && Objects.equals(address, student.address)
+                && Objects.equals(city, student.city) && Objects.equals(image, student.image);
     }
     
     public Student getStudentWithAllValues() {
-        return new Student(name, group, address, city, result, image);
+        return new Student(id, name, group, address, city, result, image);
     }
 }

@@ -119,7 +119,13 @@ public class AddStudentToGroup extends Action {
             int result = Integer.parseInt(gradeText.getText());
             String image = photoText.getText();
 
-            Student newStudent = new Student(name, group.getName(), address, city, result, image);
+            Student newStudent = new Student();
+            newStudent.setName(name);
+            newStudent.setGroup(group.getName());
+            newStudent.setAddress(address);
+            newStudent.setCity(city);
+            newStudent.setResult(result);
+            newStudent.setImage(image);
 
             // Открываем новый редактор с новым студентом
             try {
