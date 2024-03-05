@@ -15,5 +15,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Automatic-Module-Name: StudentInfoRCP
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: studentinfo.Activator
+Bundle-ClassPath: src/studentinfo/h2-2.2.224.jar,
+ .
 
 
