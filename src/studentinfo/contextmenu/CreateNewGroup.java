@@ -12,16 +12,19 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
+import studentinfo.connectionH2.DataDAO;
 import studentinfo.model.Group;
 import studentinfo.model.Student;
 
 public class CreateNewGroup extends Action {
     
     private TreeViewer treeViewer;
+    private DataDAO dataDAO;
     
-    public CreateNewGroup(TreeViewer treeViewer) {
+    public CreateNewGroup(TreeViewer treeViewer, DataDAO dataDAO) {
         super("Create new Group.");
         this.treeViewer = treeViewer;
+        this.dataDAO = dataDAO;
     }
     
     @Override
@@ -46,9 +49,11 @@ public class CreateNewGroup extends Action {
                 Group newGroup = new Group();
                 newGroup.setName(groupName);
                 newGroup.setStudentslist(students);
+                dataDAO.saveGroup(newGroup, treeViewer);
                 allGroups.add(newGroup);
                 treeViewer.setInput(allGroups);
                 treeViewer.refresh();
+                
             }
         }
     }

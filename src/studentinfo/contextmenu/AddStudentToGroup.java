@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
+import studentinfo.connectionH2.DataDAO;
 import studentinfo.model.Group;
 import studentinfo.model.Student;
 import studentinfo.view.StudentEditor;
@@ -23,11 +24,13 @@ public class AddStudentToGroup extends Action {
 
     private Group group;
     private TreeViewer treeViewer;
+    private DataDAO dataDAO;
 
-    public AddStudentToGroup(Group group, TreeViewer treeViewer) {
+    public AddStudentToGroup(Group group, TreeViewer treeViewer, DataDAO dataDAO) {
         super("Add Student to Group.");
         this.group = group;
         this.treeViewer = treeViewer;
+        this.dataDAO = dataDAO;
     }
 
     @Override
@@ -91,10 +94,10 @@ public class AddStudentToGroup extends Action {
         Label labelPhoto = new Label(shell, SWT.NONE);
         labelPhoto.setLayoutData(gridDataLabel);
         labelPhoto.setText("Photo:");
-        // String imagePath = student.getImage();
-        // ImageDescriptor imageDescriptor = ImageDescriptor.createFromFile(null, imagePath);
-        // image = imageDescriptor.createImage();
-        // labelPhoto.setImage(image);
+//         String imagePath = student.getImage();
+//         ImageDescriptor imageDescriptor = ImageDescriptor.createFromFile(null, imagePath);
+//         image = imageDescriptor.createImage();
+//         labelPhoto.setImage(image);
 
         Text photoText = new Text(shell, SWT.BORDER);
         GridData gridData6 = new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1);
@@ -126,7 +129,7 @@ public class AddStudentToGroup extends Action {
             newStudent.setCity(city);
             newStudent.setResult(result);
             newStudent.setImage(image);
-
+            
             // Открываем новый редактор с новым студентом
             try {
                 StudentEditorInput input = new StudentEditorInput(newStudent);
@@ -139,6 +142,7 @@ public class AddStudentToGroup extends Action {
             // Добавляем нового студента в группу и обновляем дерево
             group.getStudentslist().add(newStudent);
             treeViewer.refresh();
+            dataDAO.saveStudent(newStudent);
             
             shell.close();
         });

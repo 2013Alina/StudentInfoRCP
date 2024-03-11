@@ -28,6 +28,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
 
+import studentinfo.connectionH2.DataDAO;
 import studentinfo.contextmenu.AddStudentToGroup;
 import studentinfo.contextmenu.CreateNewGroup;
 import studentinfo.contextmenu.DeleteGroupAction;
@@ -42,6 +43,7 @@ public class StudentTreeView extends ViewPart {
     public static final String ID = "studentinfo.view.StudentTreeView";
 
     private TreeViewer treeViewer;
+    private DataDAO dataDAO;
     private MenuManager menuManager;
     private List<Group> groups = new ArrayList<>();
     private StudentEditor studentEditor;
@@ -62,10 +64,24 @@ public class StudentTreeView extends ViewPart {
         treeViewer = new TreeViewer(sashForm, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
         treeViewer.setContentProvider(new StudentTreeContentProvider());
         treeViewer.setLabelProvider(new StudentTreeLabelProvider());
+        
+        // При первом запуске Н2 когда надо внести данные с StudentDataManager!!!
+        // groups = StudentDataManager.addGroups();
+        // treeViewer.setInput(groups);
+        //
+        // dataDAO = new DataDAO();
+        // for(Group groupCurrent : groups) {
+        // dataDAO.saveGroup(groupCurrent, treeViewer);
+        // }
 
-        groups = StudentDataManager.addGroups();
-        treeViewer.setInput(groups);
-
+        // При последующих запусках приложения, данные уже читаются с Н2!!!
+        dataDAO = new DataDAO();
+        List<Group> groupsCurrent = dataDAO.getAllGroups();
+        treeViewer.setInput(groupsCurrent);
+        for (Group group : groupsCurrent) {
+            treeViewer.add(group, group.getStudentslist().toArray());
+        }
+        
         Sash sash = new Sash(sashForm, SWT.SMOOTH);
         sashForm.setSashWidth(5);
 
@@ -124,11 +140,11 @@ public class StudentTreeView extends ViewPart {
 
             if (firstElement instanceof Student) {
                 menuManager.add(new OpenProfileAction((Student) firstElement, treeViewer));
-                menuManager.add(new DeleteRecordAction((Student) firstElement, treeViewer));
+                menuManager.add(new DeleteRecordAction((Student) firstElement, treeViewer, dataDAO));
             } else if (firstElement instanceof Group) {
-                menuManager.add(new AddStudentToGroup((Group) firstElement, treeViewer));
-                menuManager.add(new DeleteGroupAction((Group) firstElement, treeViewer));
-                menuManager.add(new CreateNewGroup(treeViewer));
+                menuManager.add(new AddStudentToGroup((Group) firstElement, treeViewer, dataDAO));
+                menuManager.add(new DeleteGroupAction((Group) firstElement, treeViewer, dataDAO));
+                menuManager.add(new CreateNewGroup(treeViewer, dataDAO));
             }
         }
     }
@@ -136,7 +152,7 @@ public class StudentTreeView extends ViewPart {
     private void bindingContextMenu() {
         IActionBars actionBars = getViewSite().getActionBars();
         actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), new DeleteRecordAction(
-                (Student) ((IStructuredSelection) treeViewer.getSelection()).getFirstElement(), treeViewer));
+                (Student) ((IStructuredSelection) treeViewer.getSelection()).getFirstElement(), treeViewer, dataDAO));
         actionBars.updateActionBars();
     }
 
@@ -153,25 +169,18 @@ public class StudentTreeView extends ViewPart {
                 Object selectedElement = selection.getFirstElement();
                 if (selectedElement instanceof Student) {
                     Student selectedStudent = (Student) selectedElement;
+                    student = selectedStudent.getStudentWithAllValues();
                     event.doit = true;
-
-                    List<Group> groups = StudentDataManager.addGroups();
-                    List<Student> allStudents = StudentDataManager.getAllStudents(groups);
-                    for (Student st : allStudents) {
-                        if (st.equals(selectedStudent)) {
-                            student = st;
-                            student = student.getStudentWithAllValues();
-
-                            // если тяну студента то откроется эдитор выбраного студента
-                            IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                            try {
-                                StudentEditorInput newInput = new StudentEditorInput(student);
-                                page.openEditor(newInput, StudentEditor.ID);
-                            } catch (PartInitException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
+// При первом запуске Н2 когда надо внести данные с StudentDataManager!!!
+//                    List<Group> groups = StudentDataManager.addGroups();
+//                    List<Student> allStudents = StudentDataManager.getAllStudents(groups);
+//                    for (Student st : allStudents) {
+//                        if (st.equals(selectedStudent)) {
+//                            student = st;
+//                            student = student.getStudentWithAllValues();
+//
+//                        }
+//                    }
                 } else {
                     event.doit = false; // Запрещено перетаскивать все остальное
                 }
@@ -182,15 +191,25 @@ public class StudentTreeView extends ViewPart {
                 IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
                 Object selectedElement = selection.getFirstElement();
                 if (selectedElement instanceof Student) {
+                    Student selectedStudent = (Student) selectedElement;
                     // установка данных
-                    String data = student.getName() + "\n" + student.getGroup() + "\n" + student.getAddress() + "\n"
-                            + student.getCity() + "\n" + student.getResult() + "\n" + student.getImage();
+                    String data = selectedStudent.getName() + "\n" + selectedStudent.getGroup() + "\n" + selectedStudent.getAddress() + "\n"
+                            + selectedStudent.getCity() + "\n" + selectedStudent.getResult() + "\n" + selectedStudent.getImage();
                     event.data = data;
                 }
             }
 
             @Override
             public void dragFinished(DragSourceEvent event) {
+
+                // если тяну студента то откроется эдитор выбраного студента
+                IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                try {
+                    StudentEditorInput newInput = new StudentEditorInput(student);
+                    page.openEditor(newInput, StudentEditor.ID);
+                } catch (PartInitException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -217,5 +236,13 @@ public class StudentTreeView extends ViewPart {
     
     public TreeViewer getTreeView() {
         return treeViewer;
+    }
+    
+    @Override
+    public void dispose() {
+        if (dataDAO != null) {
+            dataDAO.closeConnectionH2();
+        }
+        super.dispose();
     }
 }

@@ -2,6 +2,8 @@ package studentinfo.model;
 
 import java.util.Objects;
 
+import org.eclipse.swt.graphics.Image;
+
 public class Student {
     private int id;
     private String name;
@@ -25,7 +27,7 @@ public class Student {
         this.image = image;
 
     }
-
+    
     public int getId() {
         return id;
     }

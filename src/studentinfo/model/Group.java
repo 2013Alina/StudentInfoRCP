@@ -18,6 +18,11 @@ public class Group {
         this.studentslist = studentslist;
     }
     
+    public Group(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+    
     public int getId() {
         return id;
     }

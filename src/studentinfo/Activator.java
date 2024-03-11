@@ -6,6 +6,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.h2.tools.Server;
 import org.osgi.framework.BundleContext;
 
+import studentinfo.connectionH2.DataDAO;
+
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -16,6 +18,8 @@ public class Activator extends AbstractUIPlugin {
 
     // The shared instance
     private static Activator plugin;
+    
+    private DataDAO dataDAO;
 
     /**
      * The constructor
@@ -28,12 +32,16 @@ public class Activator extends AbstractUIPlugin {
         super.start(context);
         plugin = this;
         startH2Server();
+        dataDAO = new DataDAO();
     }
 
     @Override
     public void stop(BundleContext context) throws Exception {
         plugin = null;
         stopH2Server();
+        if (dataDAO != null) {
+            dataDAO.closeConnectionH2();
+        }
         super.stop(context);
     }
 

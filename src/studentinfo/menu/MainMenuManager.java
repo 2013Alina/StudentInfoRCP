@@ -16,8 +16,7 @@ public class MainMenuManager {
         MenuManager editMenu = new MenuManager("&Edit", IWorkbenchActionConstants.M_EDIT);
         menuBar.add(editMenu);
         editMenu.add(new Separator());
-        editMenu.add(new SaveFileAction());
-        editMenu.add(new OpenFileAction());
+        editMenu.add(new SaveH2databaseAction());
         
         MenuManager helpMenu = new MenuManager("&Help", IWorkbenchActionConstants.M_HELP);
         menuBar.add(helpMenu);

@@ -1,15 +1,6 @@
 package studentinfo.view;
 
-import java.util.Base64;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
@@ -25,16 +16,13 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
-import org.osgi.framework.Bundle;
 
-import studentinfo.Activator;
 import studentinfo.model.Student;
 
 public class StudentEditor extends EditorPart {
@@ -52,7 +40,7 @@ public class StudentEditor extends EditorPart {
     
     private Text textName;
     private Text textNumberOfGroup;
-    private Text textAdress;
+    private Text textAddress;
     private Text textCity;
     private Text textGrade;
     private Image image;
@@ -152,15 +140,15 @@ public class StudentEditor extends EditorPart {
         
         GridData gridDataText3 = new GridData(SWT.DEFAULT, SWT.CENTER, true, false, 4, 1);
         gridDataText3.verticalIndent = 20;
-        textAdress = new Text(container, SWT.BORDER | SWT.MULTI);
-        textAdress.setEditable(true);
-        gc = new GC(textAdress);
+        textAddress = new Text(container, SWT.BORDER | SWT.MULTI);
+        textAddress.setEditable(true);
+        gc = new GC(textAddress);
         Point textSizeAdress = gc.textExtent(student.getAddress());
         gc.dispose();
         gridDataText3.widthHint = textSizeAdress.x;
         gridDataText3.minimumWidth = textSizeAdress.x;
-        textAdress.setLayoutData(gridDataText3);
-        textAdress.setText(student.getAddress());
+        textAddress.setLayoutData(gridDataText3);
+        textAddress.setText(student.getAddress());
         
         labelCity = new Label(container, SWT.NONE);
         labelCity.setLayoutData(gridDataLabel);
@@ -204,7 +192,6 @@ public class StudentEditor extends EditorPart {
         image = imageDescriptor.createImage();
         labelPhoto.setImage(image);
         
-        
         // DropTarget у эдитора
         int operations = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_DEFAULT;
         DropTarget dropTarget = new DropTarget(container, operations); 
@@ -216,18 +203,31 @@ public class StudentEditor extends EditorPart {
 //            Этот код обрабатывает событие сброса объекта в целевую область и извлекает данные из сброшенного объекта для последующей обработки или отображения в интерфейсе приложения
             @Override
             public void drop(DropTargetEvent event) {
-
                 if (textTransfer.isSupportedType(event.currentDataType)) {
                     String data = (String) event.data;
                     String[] dataArray = data.split("\n");
-                    for (int i = 0; i < Math.min(6, dataArray.length); i++) {
-                        String[] parts = dataArray[i].split(":");
+                    for (String item : dataArray) {
+                        String[] parts = item.split(":");
                         if (parts.length == 2) {
-                            textName.setText(parts[1]);
-                            textNumberOfGroup.setText(parts[1]);
-                            textAdress.setText(parts[1]);
-                            textCity.setText(parts[1]);
-                            textGrade.setText(parts[1]);
+                            String fieldName = parts[0].trim();
+                            String fieldValue = parts[1].trim();
+                            switch (fieldName) {
+                            case "Name":
+                                textName.setText(fieldValue);
+                                break;
+                            case "Group":
+                                textNumberOfGroup.setText(fieldValue);
+                                break;
+                            case "Address":
+                                textAddress.setText(fieldValue);
+                                break;
+                            case "City":
+                                textCity.setText(fieldValue);
+                                break;
+                            case "Result":
+                                textGrade.setText(fieldValue);
+                                break;
+                            }
                         }
                     }
                 }
